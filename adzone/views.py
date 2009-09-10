@@ -18,7 +18,7 @@ def adView(request, model, id):
     try:
         ad_type = ContentType.objects.get(app_label='adzone', model=model)
         ad = ad_type.get_object_for_this_type(id=id)
-        click = AdClick(content_object=ad, click_date=datetime.now, source_ip=request.META.get('REMOTE_ADDR'))
+        click = AdClick(content_object=ad, click_date=datetime.now(), source_ip=request.META.get('REMOTE_ADDR'))
         click.save()
     except:
         # we should raise a 404? or Bad Request?
