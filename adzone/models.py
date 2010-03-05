@@ -105,6 +105,12 @@ class AdBase(models.Model):
     def get_absolute_url(self):
         return self.id
 
+class PaperAd(AdBase):
+    '''A standard paper ad
+    '''
+    content = models.ImageField(upload_to="adzone/paperads/")
+    inches = models.IntegerField(max_length=3)
+
 class TextAd(AdBase):
     """ A Text based Ad
     """
