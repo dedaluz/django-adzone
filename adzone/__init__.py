@@ -1,4 +1,4 @@
-VERSION=(10,3)
+VERSION=(10,3, 'dev')
 # -*- coding: utf-8 -*-
 
 # © Copyright 2009 Andre Engelbrecht. All Rights Reserved.
