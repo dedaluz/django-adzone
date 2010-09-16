@@ -8,8 +8,15 @@ class AdManager(models.Manager):
         Returns a random advert that belongs to the specified category and zone
         
         """
-        try:
-            ad = self.get_query_set().filter(category__slug=ad_category, zone__slug=ad_zone).order_by('?')[0]
-        except IndexError:
-            return None;
+	if ad_category=='':
+            try:
+                ad = self.get_query_set().filter(zone__slug=ad_zone).order_by('?')[0]
+            except IndexError:
+                return None;
+        else:
+            try:
+                ad = self.get_query_set().filter(category__slug=ad_category, zone__slug=ad_zone).order_by('?')[0]
+            except IndexError:
+                return None;
+
         return ad
