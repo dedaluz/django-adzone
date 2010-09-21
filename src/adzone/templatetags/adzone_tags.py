@@ -46,7 +46,7 @@ def random_zone_ad(context, ad_category, ad_zone):
             pass
     return to_return
 
-@register.inclusion_tag('adzone/ads_tag.html', takes_context=True)
+@register.inclusion_tag('adzone/ads_tag_block.html', takes_context=True)
 def random_zone_ad_block(context, ad_category, ad_zone, number):
     """
     Returns a block of random adverts from the database.
@@ -65,12 +65,24 @@ def random_zone_ad_block(context, ad_category, ad_zone, number):
 
     # Retrieve a random ad for the category and zone
     ads=[]
-    for n in number:
+
+    # Check whether category has been specified
+    if ad_category:
+        ads=AdBase.objects.filter(enabled=True, category=ad_category, zone=ad_zone)
+    else:
+        ads=AdBase.objects.filter(enabled=True, zone=ad_zone)
+
+    # If we have fewer ads in system, adjust our block
+    if len(ads) < number:
+        number = len(ads)
+
+    while(number > 0):
         new_ad= AdBase.objects.get_random_ad(ad_category, ad_zone)
         if new_ad in ads:
             pass
         else:
             ads.append(new_ad)
+            n=n-1
         
     to_return['ads'] = ads
     
