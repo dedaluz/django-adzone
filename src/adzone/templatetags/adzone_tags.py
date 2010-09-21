@@ -45,3 +45,46 @@ def random_zone_ad(context, ad_category, ad_zone):
         except:
             pass
     return to_return
+
+@register.inclusion_tag('adzone/ads_tag.html', takes_context=True)
+def random_zone_ad_block(context, ad_category, ad_zone, number):
+    """
+    Returns a block of random adverts from the database.
+
+    In order for the impression to be saved add the following
+    to the TEMPLATE_CONTEXT_PROCESSORS:
+
+    'adzone.context_processors.get_source_ip'
+
+    Tag usage:
+    {% load adzone_tags %}
+    {% random_zone_ad_block 'my_category_slug' 'zone_slug' 4 %}
+
+    """
+    to_return = {}
+
+    # Retrieve a random ad for the category and zone
+    ads=[]
+    for n in number:
+        new_ad= AdBase.objects.get_random_ad(ad_category, ad_zone)
+        if new_ad in ads:
+            pass
+        else:
+            ads.append(new_ad)
+        
+    to_return['ads'] = ads
+    
+    # Record a impression for the ad
+    if context.has_key('from_ip') and len(ads) != 0:
+        for ad in ads:
+            from_ip = context.get('from_ip')
+            try:
+                impression = AdImpression(
+                        ad=ad,
+                        impression_date=datetime.now(),
+                        source_ip=from_ip
+                )
+                impression.save()
+            except:
+                pass
+    return to_return
