@@ -7,14 +7,23 @@ A instace of AdBase is passed to this tag.
 
 {% for ad in ads %}
     {% if ad.textad %}
-        <div class="ad_text">
-            <p><a target="_blank" href="{{ ad.get_absolute_url }}">{{ ad.textad.content }}</a></p>
-        </div>
-    {% endif %}
-
+  <tr height="107">
+    <td height="107">
+            <a target="_blank" href="{{ ad.get_absolute_url }}">{{ ad.textad.content }}</a>
+        </td>
+		</tr>
     {% if ad.bannerad %}
-        <div class="ad_banner">
+  <tr height="107">
+    <td height="107">
             <a target="_blank" href="{{ ad.get_absolute_url }}"><img src="{{ ad.bannerad.content.url }}" alt="{{ ad.title }}" /></a>
-        </div>
+        </td>
+	</tr>
+	{% endif %}
+	{% else %}
+  <tr height="107">
+    <td height="107">
+            <a target="_blank" href="{{ ad.get_absolute_url }}"><img src="{{ ad.bannerad.content.url }}" alt="{{ ad.title }}" /></a>
+        </td>
+		</tr>
     {% endif %}
 {% endfor %}
