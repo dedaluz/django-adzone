@@ -9,6 +9,7 @@ from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
 from adzone.managers import AdManager
 
@@ -68,6 +69,7 @@ class AdBase(models.Model):
     url = models.URLField(verify_exists=True)
     enabled = models.BooleanField(default=False)
     since = models.DateTimeField(default=datetime.now)
+    expires_on=models.DateTimeField(_('Expires on', blank=True, null=True))
     updated = models.DateTimeField(editable=False)
 
     # Relations
