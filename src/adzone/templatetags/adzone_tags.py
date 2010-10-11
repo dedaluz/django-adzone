@@ -46,7 +46,7 @@ def random_zone_ad(context, ad_category, ad_zone):
             pass
     return to_return
 
-@register.inclusion_tag('adzone/ads_tag_block.html', takes_context=True)
+@register.inclusion_tag('adzone/ad_tag_block.html', takes_context=True)
 def random_zone_ad_block(context, ad_category, ad_zone, number):
     """
     Returns a block of random adverts from the database.
@@ -68,13 +68,13 @@ def random_zone_ad_block(context, ad_category, ad_zone, number):
 
     # Check whether category has been specified
     if ad_category:
-        ads=AdBase.objects.filter(enabled=True, category=ad_category, zone=ad_zone)
+        lookup_ads=AdBase.objects.filter(enabled=True, category__slug=ad_category, zone__slug=ad_zone)
     else:
-        ads=AdBase.objects.filter(enabled=True, zone=ad_zone)
+        lookup_ads=AdBase.objects.filter(enabled=True, zone__slug=ad_zone)
 
     # If we have fewer ads in system, adjust our block
-    if len(ads) < number:
-        number = len(ads)
+    if len(lookup_ads) < number:
+        number = len(lookup_ads)
 
     while(number > 0):
         new_ad= AdBase.objects.get_random_ad(ad_category, ad_zone)
@@ -82,21 +82,19 @@ def random_zone_ad_block(context, ad_category, ad_zone, number):
             pass
         else:
             ads.append(new_ad)
-            n=n-1
+            number=number-1
         
+            # Record a impression for the ad
+            if context.has_key('from_ip') and new_ad:
+                from_ip = context.get('from_ip')
+                try:
+                    impression = AdImpression(
+                            ad=new_ad,
+                            impression_date=datetime.now(),
+                            source_ip=from_ip
+                            )
+                    impression.save()
+                except:
+                    pass
     to_return['ads'] = ads
-    
-    # Record a impression for the ad
-    if context.has_key('from_ip') and len(ads) != 0:
-        for ad in ads:
-            from_ip = context.get('from_ip')
-            try:
-                impression = AdImpression(
-                        ad=ad,
-                        impression_date=datetime.now(),
-                        source_ip=from_ip
-                )
-                impression.save()
-            except:
-                pass
     return to_return
