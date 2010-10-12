@@ -69,7 +69,7 @@ class AdBase(models.Model):
     url = models.URLField(verify_exists=True)
     enabled = models.BooleanField(default=False)
     since = models.DateTimeField(default=datetime.now)
-    expires_on=models.DateTimeField(_('Expires on', blank=True, null=True))
+    expires_on=models.DateTimeField(_('Expires on'), blank=True, null=True)
     updated = models.DateTimeField(editable=False)
 
     # Relations
