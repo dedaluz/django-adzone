@@ -20,8 +20,9 @@ def ad_view(request, id):
     """
     ad = get_object_or_404(AdBase, id=id)
     try:
-        click = AdClick(ad=ad, click_date=datetime.now(), source_ip=request.META.get('REMOTE_ADDR'))
-        click.save()
+        if not request.excluded_ip:
+        	click = AdClick(ad=ad, click_date=datetime.now(), source_ip=request.META.get('REMOTE_ADDR'))
+        	click.save()
     except:
         raise Http404
     return HttpResponseRedirect(ad.url)
