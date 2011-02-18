@@ -35,15 +35,17 @@ def random_zone_ad(context, ad_category, ad_zone):
     # Record a impression for the ad
     if context.has_key('from_ip') and ad:
         from_ip = context.get('from_ip')
-        try:
-            impression = AdImpression(
-                    ad=ad,
-                    impression_date=datetime.now(),
-                    source_ip=from_ip
-            )
-            impression.save()
-        except:
-            pass
+        excluded_ip = context.get('excluded_ip')
+        if not excluded_ip:
+            try:
+                impression = AdImpression(
+                        ad=ad,
+                        impression_date=datetime.now(),
+                        source_ip=from_ip
+                )
+                impression.save()
+            except:
+                pass
     return to_return
 
 @register.inclusion_tag('adzone/ad_tag_block.html', takes_context=True)
