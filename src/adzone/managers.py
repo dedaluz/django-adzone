@@ -20,3 +20,6 @@ class AdManager(models.Manager):
                 return None;
 
         return ad
+
+    def enabled(self):
+        return self.get_query_set().filter(enabled=True)

@@ -91,6 +91,28 @@ class AdBase(models.Model):
         self.updated = datetime.now()
         super(AdBase, self).save(*args, **kwargs)
 
+    def impressions(self, start=None, end=None):
+        if start is not None:
+            start_q=models.Q(impression_date__gte=start)
+        else:
+            start_q=models.Q()
+        if end is not None:
+            end_q=models.Q(impression_date__lte=end)
+        else:
+            end_q=models.Q()
+        return self.adimpression_set.filter(start_q & end_q).count()
+
+    def clicks(self, start=None, end=None):
+        if start is not None:
+            start_q=models.Q(click_date__gte=start)
+        else:
+            start_q=models.Q()
+        if end is not None:
+            end_q=models.Q(click_date__lte=end)
+        else:
+            end_q=models.Q()
+        return self.adclick_set.filter(start_q & end_q).count()
+
 class AdImpression(models.Model):
     """
     The AdImpression Model will record every time the ad is loaded on a page
