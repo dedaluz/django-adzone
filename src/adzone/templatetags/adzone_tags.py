@@ -89,15 +89,16 @@ def random_zone_ad_block(context, ad_category, ad_zone, number):
             # Record a impression for the ad
             if context.has_key('from_ip') and new_ad:
                 from_ip = context.get('from_ip')
-                excluded_ip = context.get('excluded_ip')
-                try:
-                    impression = AdImpression(
-                            ad=new_ad,
-                            impression_date=datetime.now(),
-                            source_ip=from_ip
-                            )
-                    impression.save()
-                except:
-                    pass
+                if not context.get('excluded_ip'):
+
+                    try:
+                        impression = AdImpression(
+                                ad=new_ad,
+                                impression_date=datetime.now(),
+                                source_ip=from_ip
+                                )
+                        impression.save()
+                    except:
+                        pass
     to_return['ads'] = ads
     return to_return
