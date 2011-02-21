@@ -35,8 +35,7 @@ def random_zone_ad(context, ad_category, ad_zone):
     # Record a impression for the ad
     if context.has_key('from_ip') and ad:
         from_ip = context.get('from_ip')
-        excluded_ip = context.get('excluded_ip')
-        if not excluded_ip:
+        if not context.get('excluded_ip'):
             try:
                 impression = AdImpression(
                         ad=ad,
