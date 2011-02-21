@@ -37,13 +37,14 @@ def ad_display(request):
     """
     context = RequestContext(request)
     ad = AdBase.objects.get_random_ad('', 'calendar')
-    if (context.has_key('from_ip') and ad) and not request.excluded_ip:
+    if context.has_key('from_ip') and ad:
         from_ip = context.get('from_ip')
-        try:
-            impression = AdImpression(ad=ad, impression_date=datetime.now(), source_ip=from_ip)
-            impression.save()
-        except:
-            pass
+        if not context.get('excluded_ip'):
+            try:
+                impression = AdImpression(ad=ad, impression_date=datetime.now(), source_ip=from_ip)
+                impression.save()
+            except:
+                pass
     return render_to_response('adzone/ad_display.html', locals(), context_instance=RequestContext(request))
 
 
