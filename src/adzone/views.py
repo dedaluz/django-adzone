@@ -11,7 +11,7 @@ from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.template import RequestContext 
 from django.contrib.auth.decorators import permission_required 
 from django.core import serializers 
-from adzone.models import AdBase, AdClick, BannerAd, TextAd 
+from adzone.models import AdBase, AdClick, BannerAd, TextAd, AdImpression
 
 def ad_view(request, id):
     """
@@ -37,42 +37,34 @@ def ad_display(request):
     """
     context = RequestContext(request)
     ad = AdBase.objects.get_random_ad('', 'calendar')
-    if context.has_key('from_ip') and ad:
-        from_ip = context.get('from_ip')
-        if not context.get('excluded_ip'):
-            try:
-                impression = AdImpression(ad=ad, impression_date=datetime.now(), source_ip=from_ip)
-                impression.save()
-            except:
-                pass
+    from_ip = request.META['REMOTE_ADDR']
+    if not request.excluded_ip:
+        impression = AdImpression(ad=ad, impression_date=datetime.now(), source_ip=from_ip)
+        impression.save()
     return render_to_response('adzone/ad_display.html', locals(), context_instance=RequestContext(request))
 
 
 @permission_required('adzone.change_adbase')
 def ad_index(request):
     ad_list=[]
-    if request.GET:
-        q = request.GET.get('q')
-        qs=[Q()]
-        try:
-            qs.append(Q(impression_date__gte=q.items()[0]))
-        except:
-            pass
-        try:
-            qs.append(Q(impression_date__lte=q.items()[1]))
-        except:
-            pass
-        ads = AdBase.objects.enabled()  
-        if (q is not None):
-            for ad in ads:
-                ad_list.append([ad, ad.adimpression_set.filter(reduce(operator.and_, qs)).count(),
-                                     ad.adclick_set.filter(reduce(operator.and_, qs)).count()])
+    if request.method == 'GET':
+        filter=[]
+	if 'start' in request.GET:
+            filter.append(request.GET.get('start'))
+	if 'end' in request.GET:
+            filter.append(request.GET.get('end'))
+        ads = AdBase.objects.enabled()
+        for ad in ads:
+            ad_list.append([ad, ad.impressions(*filter), ad.clicks(*filter)])
     else:
         ads = AdBase.objects.enabled()  
         for ad in ads:
-            ad_list.append([ad, ad.adimpression_set.all().count(),
-                                ad.adclick_set.all().count()])
+            ad_list.append([ad, ad.impressions(), ad.clicks()])
     return render_to_response('adzone/ad_index.html', locals(), context_instance=RequestContext(request))
+
+def ad_detail(request, id):
+    ad=AdBase.objects.get(pk=id)
+    return render_to_response('adzone/ad_detail.html', locals(), context_instance=RequestContext(request))
 
 @permission_required('adzone.change_adbase')
 def xhr_ad_table(request):
