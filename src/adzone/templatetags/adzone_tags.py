@@ -101,3 +101,65 @@ def random_zone_ad_block(context, ad_category, ad_zone, number):
                         pass
     to_return['ads'] = ads
     return to_return
+
+class GetAdStatsNode(template.Node):
+    """
+    Retrieves the stats of an ad object.
+
+    Usage::
+
+        {% get_ad_stats for ad as stats %}
+
+        {% get_ad_stats for ad as stats from 2010-08-01 to 2011-08-01 %}
+
+        {% get_ad_stats for ad as stats from 2010-08-01 %}
+
+        {% get_ad_stats for ad as stats to 2011-08-01 %}
+    """
+    def __init__(self, ad, varname, start=None, end=None):
+        self.ad = template.Variable(ad)
+        self.start = start
+        self.end = end
+        self.varname = varname.strip()
+
+    def render(self, context):
+        ad = self.ad.resolve(context)
+             
+        filter=[]
+        if self.start:
+            filter.append(start)
+        if self.end:
+            filter.append(end)
+
+        imps = ad.impressions(*filter)
+        clks = ad.clicks(*filter)
+
+        # put the stats into the context
+        context[self.varname] = [imps, clks]
+        return ''
+
+def get_ad_stats(parser, token):
+    """
+    Retrieves a stats for an ad object between specific dates for use in a template.
+    """
+    args = token.split_contents()
+    argc = len(args)
+
+    try:
+        assert argc in (3,5,7)
+    except AssertionError:
+        raise template.TemplateSyntaxError('Invalid get_ad_stats syntax.')
+
+    # determine what parameters to use
+    ad = varname = start = end = None
+    if argc == 5: t, f, ad, as, varname = args
+    elif argc == 7 and args[-2] == 'from': t, f, ad, as, varname, fr, start = args
+    #elif argc == 9 and (args[-2] =='to' and args[-4]=='from'): t, f, ad, as, varname, from, start, to, end = args
+    elif argc == 7 and args[-2] == 'to': t, f, ad, as, varname, to, end = args
+
+    return GetAdStatsNode(ad=ad,
+                           varname=varname,
+                           start=start,
+                           end=end)
+
+register.tag(get_ad_stats)

@@ -4,6 +4,7 @@
 
 from datetime import datetime 
 from django.db.models import Q
+import django.utils.simplejson as json
 import operator
 from django.shortcuts import render_to_response 
 from django.shortcuts import get_object_or_404 
@@ -44,15 +45,24 @@ def ad_display(request):
     return render_to_response('adzone/ad_display.html', locals(), context_instance=RequestContext(request))
 
 
+def _convert_string(date):
+    if date == "Today":
+        return datetime.now().strftime('%Y-%m-%d')
+    elif date == "Yesterday":
+        return (datetime.now()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+    else:
+        return date
+
 @permission_required('adzone.change_adbase')
 def ad_index(request):
     ad_list=[]
     if request.method == 'GET':
         filter=[]
-	if 'start' in request.GET:
-            filter.append(request.GET.get('start'))
-	if 'end' in request.GET:
-            filter.append(request.GET.get('end'))
+    if 'start' in request.GET:
+        start = _convert_string(request.GET.get('start'))
+        filter.append(start)
+    if 'end' in request.GET:
+        end = _convert_string(request.GET.get('end'))
         ads = AdBase.objects.enabled()
         for ad in ads:
             ad_list.append([ad, ad.impressions(*filter), ad.clicks(*filter)])
@@ -67,10 +77,41 @@ def ad_detail(request, id):
     return render_to_response('adzone/ad_detail.html', locals(), context_instance=RequestContext(request))
 
 @permission_required('adzone.change_adbase')
-def xhr_ad_table(request):
+def xhr_ad_detail(request, id, format=None):
     if request.is_ajax():
-        q = request.GET.get('q')
-        if (q is not None):
-            imps = AdImpression.objects.filter(impression_date__gte=startdate, impression_date__lte=enddate)
-            clicks = AdClick.objects.filter(click_date=startdate, click_date=enddate)
-    return render_to_response('adzone/ad_index.html', locals(), context_instance=RequestContext(request))
+        if request.method == 'POST':
+            filter=[]
+            if 'start' in request.POST:
+                start = _convert_string(request.POST.get('start'))
+                filter.append(start)
+            if 'end' in request.POST:
+                end = _convert_string(request.POST.get('end'))
+                ads = AdBase.objects.enabled()
+                for ad in ads:
+                    ad_list.append([ad, ad.impressions(*filter), ad.clicks(*filter)])
+        else:
+            ads = AdBase.objects.enabled()  
+            for ad in ads:
+                ad_list.append([ad, ad.impressions(), ad.clicks()])
+        if format == 'json':
+            mimetype='application/json'
+        if format == 'xml':
+            mimetype='application/xml'
+        data = serializers.serialize(format, ads)
+    else:
+        return HttpResponse(status=400)
+    return HttpResponse(data, mimetype)
+@permission_required('adzone.change_adbase')
+def xhr_ad_table(request, format=None):
+    if request.is_ajax():
+        ad_list=[]
+        if request.method == 'POST':
+            ads = AdBase.objects.enabled()
+        if format == 'json':
+            mimetype='application/json'
+        if format == 'xml':
+            mimetype='application/xml'
+        if format == 'html':
+            mimetype='text/html'
+	data = serializers.serialize(format, ads)
+    return HttpResponse(data, mimetype)
