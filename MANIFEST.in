@@ -1,2 +1,3 @@
 include README.textile
-recursive-include src/adzone/templates/adzone *
+recursive-include adzone/templatetags *
+recursive-include adzone/templates/adzone *
