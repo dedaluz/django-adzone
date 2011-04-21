@@ -101,6 +101,7 @@ def xhr_ad_detail(request, id, format=None):
     else:
         return HttpResponse(status=400)
     return HttpResponse(data, mimetype)
+
 @permission_required('adzone.change_adbase')
 def xhr_ad_table(request, format=None):
     if request.is_ajax():

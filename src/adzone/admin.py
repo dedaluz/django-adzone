@@ -6,7 +6,7 @@
 # If this script is distributed, it must be accompanied by the Licence
 
 from django.contrib import admin
-from adzone.models import *
+from adzone.models import Advertiser, AdCategory, AdZone, BannerAd, FlashAd, AdClick, AdImpression
 
 class AdvertiserAdmin(admin.ModelAdmin):
     search_fields = ['company_name', 'website']
@@ -24,8 +24,10 @@ class AdBaseAdmin(admin.ModelAdmin):
     list_filter = ['updated', 'enabled', 'since', 'updated']
     search_fields = ['title', 'url']
 
-class TextAdAdmin(AdBaseAdmin):
-    search_fields = ['title', 'url', 'content']
+class BannerAdAdmin(admin.ModelAdmin):
+    list_display = ['title', 'url', 'advertiser', 'updated', 'enabled']
+    list_filter = ['updated', 'enabled']
+    search_fields = ['title', 'url']
 
 class AdClickAdmin(admin.ModelAdmin):
     search_fields = ['ad', 'source_ip']
@@ -46,3 +48,9 @@ admin.site.register(TextAd, TextAdAdmin)
 admin.site.register(BannerAd, AdBaseAdmin)
 admin.site.register(AdClick, AdClickAdmin)
 admin.site.register(AdImpression, AdImpressionAdmin)
+
+
+
+
+
+
