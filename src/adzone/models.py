@@ -17,7 +17,7 @@ class Advertiser(models.Model):
     """ A Model for our Advertiser
     """
     company_name = models.CharField(max_length=255)
-    website = models.URLField(verify_exists=True)
+    website = models.URLField(verify_exists=False)
     user = models.ForeignKey(User)
 
     def __unicode__(self):
@@ -66,7 +66,7 @@ class AdBase(models.Model):
 
     """
     title = models.CharField(max_length=255)
-    url = models.URLField(verify_exists=True)
+    url = models.URLField(verify_exists=False)
     enabled = models.BooleanField(default=False)
     since = models.DateTimeField(default=datetime.now)
     expires_on=models.DateTimeField(_('Expires on'), blank=True, null=True)
@@ -146,4 +146,4 @@ class TextAd(AdBase):
 
 class BannerAd(AdBase):
     """ A standard banner Ad """
-    content = models.ImageField(upload_to="adzone/bannerads/")
+    content = models.ImageField(upload_to="zone/banners/")

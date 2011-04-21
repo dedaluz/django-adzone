@@ -5,25 +5,12 @@ A instace of AdBase is passed to this tag.
 
 {% endcomment %}
 
+<div class="rotator">
+  <ul>
 {% for ad in ads %}
-    {% if ad.textad %}
-  <tr height="107">
-    <td height="107">
-            <a target="_blank" href="{{ ad.get_absolute_url }}">{{ ad.textad.content }}</a>
-        </td>
-		</tr>
     {% if ad.bannerad %}
-  <tr height="107">
-    <td height="107">
-            <a target="_blank" href="{{ ad.get_absolute_url }}"><img src="{{ ad.bannerad.content.url }}" alt="{{ ad.title }}" /></a>
-        </td>
-	</tr>
-	{% endif %}
-	{% else %}
-  <tr height="107">
-    <td height="107">
-            <a target="_blank" href="{{ ad.get_absolute_url }}"><img src="{{ ad.bannerad.content.url }}" alt="{{ ad.title }}" /></a>
-        </td>
-		</tr>
+    <li class="{% if forloop.first %}show{% endif %}"><a href="{{ad.get_absolute_url}}"><img src="{{ad.bannerad.content.url}}" alt="{{ad}}" /></a></li>
     {% endif %}
 {% endfor %}
+  </ul>
+</div>

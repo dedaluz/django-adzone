@@ -152,10 +152,10 @@ def get_ad_stats(parser, token):
 
     # determine what parameters to use
     ad = varname = start = end = None
-    if argc == 5: t, f, ad, as, varname = args
-    elif argc == 7 and args[-2] == 'from': t, f, ad, as, varname, fr, start = args
+    if argc == 5: t, f, ad, a, varname = args
+    elif argc == 7 and args[-2] == 'from': t, f, ad, a, varname, fr, start = args
     #elif argc == 9 and (args[-2] =='to' and args[-4]=='from'): t, f, ad, as, varname, from, start, to, end = args
-    elif argc == 7 and args[-2] == 'to': t, f, ad, as, varname, to, end = args
+    elif argc == 7 and args[-2] == 'to': t, f, ad, a, varname, to, end = args
 
     return GetAdStatsNode(ad=ad,
                            varname=varname,
