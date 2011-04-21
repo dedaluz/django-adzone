@@ -18,7 +18,7 @@ setup(
     description = "Advertisment management for the Django web framework.",
     author = "Colin Powell",
     author_email = "cpowel@penobscotbaypress.com",
-    url = "http://src.coastalconnect.me/django-adzone/",
+    url = "http://src.onecardinal.com/django-adzone/",
     packages = find_packages(),
     package_data = {
         'adzone': [

@@ -6,7 +6,7 @@
 # If this script is distributed, it must be accompanied by the Licence
 
 from django.contrib import admin
-from adzone.models import Advertiser, AdCategory, AdZone, BannerAd, FlashAd, AdClick, AdImpression
+from adzone.models import Advertiser, AdCategory, AdZone, BannerAd, AdClick, AdImpression
 
 class AdvertiserAdmin(admin.ModelAdmin):
     search_fields = ['company_name', 'website']
@@ -44,7 +44,6 @@ class AdImpressionAdmin(admin.ModelAdmin):
 admin.site.register(Advertiser, AdvertiserAdmin)
 admin.site.register(AdCategory, AdCategoryAdmin)
 admin.site.register(AdZone, AdZoneAdmin)
-admin.site.register(TextAd, TextAdAdmin)
 admin.site.register(BannerAd, AdBaseAdmin)
 admin.site.register(AdClick, AdClickAdmin)
 admin.site.register(AdImpression, AdImpressionAdmin)
