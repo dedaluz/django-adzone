@@ -1,4 +1,4 @@
-VERSION=(10,3,1)
+VERSION=(10,3,2)
 # -*- coding: utf-8 -*-
 
 # © Copyright 2009 Andre Engelbrecht. All Rights Reserved.
