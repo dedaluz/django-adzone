@@ -70,7 +70,7 @@ class AdBase(models.Model):
     enabled = models.BooleanField(default=False)
     since = models.DateTimeField(default=datetime.now)
     expires_on=models.DateTimeField(_('Expires on'), blank=True, null=True)
-    updated = models.DateTimeField(editable=False)
+    updated = models.DateTimeField(editable=False, auto_now=True)
 
     # Relations
     advertiser = models.ForeignKey(Advertiser)
@@ -86,10 +86,6 @@ class AdBase(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('adzone_ad_view', [self.id])
-
-    def save(self, *args, **kwargs):
-        self.updated = datetime.now()
-        super(AdBase, self).save(*args, **kwargs)
 
     def impressions(self, start=None, end=None):
         if start is not None:
